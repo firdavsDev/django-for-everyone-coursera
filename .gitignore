@@ -6,3 +6,4 @@ __pycache__/
 .vscode-test/
 .vagra
 venv/
+db.sqlite3

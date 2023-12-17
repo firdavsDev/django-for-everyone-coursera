@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'quiz',
     'hello',
+    #CRUD
+    'autos',
+    "home"
 
 ]
 
