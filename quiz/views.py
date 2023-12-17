@@ -17,7 +17,7 @@ class IndexView(generic.ListView):
 
 # Create your views here.
 def owner(request):
-    return HttpResponse("Hello, world. ccf086b6 is the polls index.")
+    return HttpResponse("Hello, world. 71985d37 is the polls index.")
 
 class DetailView(generic.DetailView):
     model = Questions
