@@ -1,7 +1,7 @@
 from django.db import models
 
 class Questions(models.Model):
-    name = models.CharField(max_length=100)
+    question_text = models.CharField(max_length=100)
     pub_date = models.DateTimeField('date published', null=True, blank=True)
 
     def __str__(self):
