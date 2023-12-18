@@ -13,6 +13,7 @@ class Ad(models.Model) :
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     comments = models.ManyToManyField(settings.AUTH_USER_MODEL,
                                       through='Comment', related_name='comments_owned')
+    tags = models.CharField(max_length=200, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -41,8 +42,7 @@ class Comment(models.Model) :
 
     # Shows up in the admin list
     def __str__(self):
-        if len(self.text) < 15 : return self.text
-        return self.text[:11] + ' ...'
+        return self.text if len(self.text) < 15 else f'{self.text[:11]} ...'
 
 
 class Fav(models.Model) :
@@ -53,5 +53,5 @@ class Fav(models.Model) :
     class Meta:
         unique_together = ('ad', 'user')
 
-    def __str__(self) :
-        return '%s likes %s'%(self.user.username, self.ad.title[:10])
+    def __str__(self):
+        return f'{self.user.username} likes {self.ad.title[:10]}'
