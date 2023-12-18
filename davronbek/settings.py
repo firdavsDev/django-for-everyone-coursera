@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'ads',
     "social_django", #pip install social-auth-app-django
     'crispy_forms', #pip install django-crispy-forms
+    "crispy_bootstrap4", #pip install django-crispy-bootstrap4
 
 
 ]
