@@ -29,7 +29,7 @@ DEBUG = True
 #ALLOWED_HOSTS = ['davronbekdev.pythonanywhere.com']
 ALLOWED_HOSTS = ['*']
 
-
+APP_NAME = 'ChucksList'
 
 # Application definition
 
