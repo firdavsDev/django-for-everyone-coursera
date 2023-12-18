@@ -44,7 +44,9 @@ INSTALLED_APPS = [
     'hello',
     #CRUD
     'autos',
-    "home"
+    "home",
+    'cats',
+
 
 ]
 
