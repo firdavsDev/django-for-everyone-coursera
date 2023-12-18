@@ -1,9 +1,11 @@
+import contextlib
 from django.views import View
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView
+from django.contrib.humanize.templatetags.humanize import naturaltime
 
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
@@ -12,14 +14,32 @@ from ads.forms import CreateForm, CommentForm
 from ads.models import Ad, Comment, Fav
 from ads.owner import OwnerListView, OwnerDetailView, OwnerCreateView, OwnerUpdateView, OwnerDeleteView
 
+from django.db.models import Q
+
 
 class AdListView(OwnerListView):
     model = Ad
     template_name = "ads/ad_list.html"
 
     def get(self, request):
-        ad_list = Ad.objects.all()
-        favorites = list()
+        if strval := request.GET.get("search", False):
+            # Simple title-only search
+            # objects = Post.objects.filter(title__contains=strval).select_related().order_by('-updated_at')[:10]
+
+            # Multi-field search
+            query = Q(title__contains=strval)
+            query.add(Q(text__contains=strval), Q.OR)
+            objects = Ad.objects.filter(query).select_related().order_by('-updated_at')[:10]
+        else:
+            # try both versions with > 4 posts and watch the queries that happen
+            objects = Ad.objects.all().order_by('-updated_at')[:10]
+        # Augment the post_list
+        for obj in objects:
+            obj.natural_updated = naturaltime(obj.updated_at)
+
+
+        ad_list = objects
+        favorites = []
         if request.user.is_authenticated:
             rows = request.user.favorite_ads.values('id')
             favorites = [ row['id'] for row in rows ]
@@ -120,24 +140,19 @@ from django.db.utils import IntegrityError
 
 @method_decorator(csrf_exempt, name='dispatch')
 class AddFavoriteView(LoginRequiredMixin, View):
-    def post(self, request, pk) :
+    def post(self, request, pk):
         print("Add PK",pk)
         ad = get_object_or_404(Ad, id=pk)
         fav = Fav(user=request.user, ad=ad)
-        try:
+        with contextlib.suppress(IntegrityError):
             fav.save()  # In case of duplicate key
-        except IntegrityError as e:
-            pass
         return HttpResponse()
 
 @method_decorator(csrf_exempt, name='dispatch')
 class DeleteFavoriteView(LoginRequiredMixin, View):
-    def post(self, request, pk) :
+    def post(self, request, pk):
         print("Delete PK",pk)
         ad = get_object_or_404(Ad, id=pk)
-        try:
+        with contextlib.suppress(Fav.DoesNotExist):
             fav = Fav.objects.get(user=request.user, ad=ad).delete()
-        except Fav.DoesNotExist as e:
-            pass
-
         return HttpResponse()
