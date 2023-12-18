@@ -142,3 +142,4 @@ MEDIA_ROOT = '/home/davronbekdev/davronbek/media'
 MEDIA_URL = '/media/'
 STATIC_ROOT = '/home/davronbekdev/davronbek/static'
 STATIC_URL = '/static/'
+CRISPY_TEMPLATE_PACK = 'bootstrap4' #pip install django-crispy-forms
