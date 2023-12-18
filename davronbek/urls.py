@@ -4,12 +4,14 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth.views import LogoutView
 
+from .views import logout_user
+
 urlpatterns = [
     path('', include('ads.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),  # Keep
     #logout
-    path('accounts/logout/', LogoutView.as_view(), name='logout'),
+    path('accounts/logout/', logout_user, name='logout'),
     path('oauth/', include('social_django.urls', namespace='social')),  # Keep
 
     # Sample applications
